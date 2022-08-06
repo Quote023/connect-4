@@ -1,12 +1,12 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import Game from "pages/Game";
 import { FC } from "react";
 import { RecoilRoot } from "recoil";
+import Router from "Router";
 
 const App: FC = () => (
   <ChakraProvider>
     <RecoilRoot>
-      <Game/>
+      <Router/>
     </RecoilRoot>
   </ChakraProvider>
 );
