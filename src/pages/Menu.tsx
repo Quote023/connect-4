@@ -1,7 +1,8 @@
-import { Button, Container, Heading, VStack } from '@chakra-ui/react';
+import { Button, Container, Heading, HStack, VStack } from '@chakra-ui/react';
 import ColorSelectInput from 'components/ColorSelectInput';
 import FormInput from 'components/FormInput';
 import { p1Palette, p2Palette } from 'const';
+import useResetGame from 'hooks/useResetGame';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
@@ -15,6 +16,7 @@ type PlayerInfoForm = {
   p1Color: vWrapper<string>,
   p2Name: vWrapper<string>,
   p2Color: vWrapper<string>,
+  new: vWrapper<0|1>,
 }
 
 /**
@@ -26,7 +28,9 @@ type PlayerInfoForm = {
 
 const Menu: React.FC = () => {
   const setPlayersData = useSetRecoilState(playersDataState)
+  const handleNewGame = useResetGame();
   const navigate = useNavigate();
+
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,6 +40,8 @@ const Menu: React.FC = () => {
       2: { num: 2, color: elements.p2Color.value, name: elements.p2Name.value }
     }
     setPlayersData(newData)
+    if(elements.new.value === 1) handleNewGame();
+    
     navigate("/game");
   }
 
@@ -58,7 +64,10 @@ const Menu: React.FC = () => {
           helperText={<ColorSelectInput name="p2Color" defaultValue={p2Palette[0]} colors={p2Palette} />}
           name="p2Name"
         />
-        <Button type="submit">Start Game</Button>
+        <HStack>
+           <Button colorScheme="green" name="new" value={1} type="submit">New Game</Button>
+           <Button name="new" value={0} type="submit">Continue</Button>
+        </HStack>
         </VStack> 
       </form>
     </Container>
