@@ -1,12 +1,12 @@
-import { Button, Container, Heading, HStack, VStack } from '@chakra-ui/react';
+import { Button, Checkbox, Container, Heading, HStack, VStack } from '@chakra-ui/react';
 import ColorSelectInput from 'components/ColorSelectInput';
 import FormInput from 'components/FormInput';
 import { p1Palette, p2Palette } from 'const';
 import useResetGame from 'hooks/useResetGame';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
-import { playersDataState } from 'state';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { boardState, playersDataState } from 'state';
 import { Player, PlayerInfo } from 'types';
 
 type vWrapper<T> = { value: T }
@@ -16,7 +16,7 @@ type PlayerInfoForm = {
   p1Color: vWrapper<string>,
   p2Name: vWrapper<string>,
   p2Color: vWrapper<string>,
-  new: vWrapper<0|1>,
+  newGame: {checked: boolean},
 }
 
 /**
@@ -27,10 +27,12 @@ type PlayerInfoForm = {
  */
 
 const Menu: React.FC = () => {
-  const setPlayersData = useSetRecoilState(playersDataState)
+  const [playersData,setPlayersData] = useRecoilState(playersDataState)
+  const board = useRecoilValue(boardState);
   const handleNewGame = useResetGame();
   const navigate = useNavigate();
-
+  
+  const onGoingGame = board.some((col) => col.length);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,7 +42,7 @@ const Menu: React.FC = () => {
       2: { num: 2, color: elements.p2Color.value, name: elements.p2Name.value }
     }
     setPlayersData(newData)
-    if(elements.new.value === 1) handleNewGame();
+    if(elements.newGame.checked) handleNewGame();
     
     navigate("/game");
   }
@@ -55,18 +57,20 @@ const Menu: React.FC = () => {
           label="Player 1:"
           name="p1Name"
           placeholder='player name'
+          defaultValue={playersData[1].name}
           helperText={<ColorSelectInput name="p1Color" defaultValue={p1Palette[0]} colors={p1Palette} />}
         />
         <FormInput
           isRequired
           label="Player 2:"
           placeholder='player name'
+          defaultValue={playersData[2].name}
           helperText={<ColorSelectInput name="p2Color" defaultValue={p2Palette[0]} colors={p2Palette} />}
           name="p2Name"
         />
         <HStack>
-           <Button colorScheme="green" name="new" value={1} type="submit">New Game</Button>
-           <Button name="new" value={0} type="submit">Continue</Button>
+           <Checkbox name="newGame" disabled={!onGoingGame} defaultChecked={!onGoingGame}>New Game</Checkbox>
+           <Button type="submit">Start</Button>
         </HStack>
         </VStack> 
       </form>
