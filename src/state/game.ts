@@ -1,19 +1,21 @@
 import { boardCols, defaultPlayerName, p1Palette, p2Palette } from "const";
-import { atom, AtomEffect } from "recoil";
-import { Board, Player, PlayerInfo as PlayerData } from "types";
+import { atom } from "recoil";
+import { Board, GameHistory, Player, PlayerData } from "types";
+import { localStorageEffect } from "./effects";
 
-const localStorageEffect = <T>(key: string): AtomEffect<T> => ({ setSelf, onSet }) => {
-  const savedValue = localStorage.getItem(key);
-  if (savedValue != null) {
-    setSelf(JSON.parse(savedValue));
-  }
 
-  onSet((newValue, _, isReset) => {
-    isReset
-      ? localStorage.removeItem(key)
-      : localStorage.setItem(key, JSON.stringify(newValue));
-  });
-};
+export const gameHistoryState = atom<GameHistory>({
+  key: "gameHistoryState",
+  default: [],
+  effects: [localStorageEffect("gameHistory")]
+});
+
+
+export const playSequenceState = atom<number[]>({
+  key: "playSequenceState",
+  default: [],
+  effects: [localStorageEffect("currentPlaySequence")]
+});
 
 export const boardState = atom<Board>({
   key: "boardState",

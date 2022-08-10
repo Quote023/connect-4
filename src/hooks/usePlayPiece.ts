@@ -1,6 +1,7 @@
 import { boardRows } from "const";
-import { useRecoilState } from "recoil";
-import { boardState, gameOverState, playerState } from "state";
+import {v4 as uuidv4} from "uuid";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { boardState, gameHistoryState, gameOverState, playersDataState, playerState, playSequenceState } from "state";
 import { Board } from "types";
 
 const getDiagonals = (board: Board,col: number, row: number) => {
@@ -23,8 +24,13 @@ const testWin = (arr: number[]): boolean => /1{4}|2{4}/.test(arr.join(""));
 
 const usePlayPiece = () => {
   const [board, setBoard] = useRecoilState(boardState);
+  const [playSequence,setPlaySequence] = useRecoilState(playSequenceState);
   const [player, setPlayerTurn] = useRecoilState(playerState);
   const [gameOver, setGameOver] = useRecoilState(gameOverState);
+  const playersData = useRecoilValue(playersDataState);
+
+  const setGameHistory = useSetRecoilState(gameHistoryState);
+
 
   return (col: number) => {
     // Prevent adding a piece when the game is over
@@ -41,6 +47,7 @@ const usePlayPiece = () => {
     const newBoard = board.map((column, i) =>
       i === col ? [...column, player] : column
     );
+    const newSeq = [...playSequence, col];
 
     const row = newBoard[col].length - 1;
     const [ld,rd] = getDiagonals(newBoard,col,row)
@@ -51,10 +58,18 @@ const usePlayPiece = () => {
       testWin(rd)// Did win diagonally from the right
     ) {
       setGameOver(true);
+      setGameHistory(hs => [...hs, {
+        id: uuidv4().split("-")[0],
+        board: newBoard,
+        sequence: newSeq,
+        winner: player,
+        players: playersData
+      }])
     } else {
       setPlayerTurn(player === 1 ? 2 : 1);
     }
     
+    setPlaySequence(newSeq);
     setBoard(newBoard);
   };
 };

@@ -6,8 +6,8 @@ import useResetGame from 'hooks/useResetGame';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { boardState, playersDataState } from 'state';
-import { Player, PlayerInfo } from 'types';
+import { boardState, gameOverState, playersDataState } from 'state';
+import { Player, PlayerData } from 'types';
 
 type vWrapper<T> = { value: T }
 
@@ -29,15 +29,16 @@ type PlayerInfoForm = {
 const Menu: React.FC = () => {
   const [playersData,setPlayersData] = useRecoilState(playersDataState)
   const board = useRecoilValue(boardState);
+  const gameOver = useRecoilValue(gameOverState);
   const handleNewGame = useResetGame();
   const navigate = useNavigate();
   
-  const onGoingGame = board.some((col) => col.length);
+  const onGoingGame = board.some((col) => col.length) && !gameOver;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const elements = e.target as (typeof e.target & PlayerInfoForm)
-    const newData: Record<Player,PlayerInfo> = {
+    const newData: Record<Player,PlayerData> = {
       1: { num: 1, color: elements.p1Color.value, name: elements.p1Name.value },
       2: { num: 2, color: elements.p2Color.value, name: elements.p2Name.value }
     }
@@ -48,7 +49,7 @@ const Menu: React.FC = () => {
   }
 
   return (
-    <Container as={VStack}>
+    <Container as={VStack} py={4}>
       <Heading as="h1" size="lg">Connect-4</Heading>
       <form onSubmit={handleSubmit}>
       <VStack spacing={10}>
@@ -74,6 +75,7 @@ const Menu: React.FC = () => {
         </HStack>
         </VStack> 
       </form>
+      <Button mt="1rem" onClick={() => navigate("/leaderboards")}>Leaderboards</Button>
     </Container>
   )
 }
