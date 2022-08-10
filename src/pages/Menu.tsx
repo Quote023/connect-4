@@ -58,14 +58,14 @@ const Menu: React.FC = () => {
           name="p1Name"
           placeholder='player name'
           defaultValue={playersData[1].name}
-          helperText={<ColorSelectInput name="p1Color" defaultValue={p1Palette[0]} colors={p1Palette} />}
+          helperText={<ColorSelectInput name="p1Color" defaultValue={playersData[1].color} colors={p1Palette} />}
         />
         <FormInput
           isRequired
           label="Player 2:"
           placeholder='player name'
           defaultValue={playersData[2].name}
-          helperText={<ColorSelectInput name="p2Color" defaultValue={p2Palette[0]} colors={p2Palette} />}
+          helperText={<ColorSelectInput name="p2Color" defaultValue={playersData[2].color} colors={p2Palette} />}
           name="p2Name"
         />
         <HStack>
