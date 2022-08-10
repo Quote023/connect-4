@@ -16,6 +16,15 @@ const render = () => {
       wrapper: RecoilRoot,
     }
   );
+  
+  //Ignore localstorage, it should be tested on E2E tests
+  Object.defineProperty(window, "localStorage", {
+    value: {
+      getItem: jest.fn(() => null),
+      setItem: jest.fn(() => null)
+    },
+    writable: true
+  });
 
   return {
     result,

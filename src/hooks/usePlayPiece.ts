@@ -28,7 +28,6 @@ const usePlayPiece = () => {
   const [player, setPlayerTurn] = useRecoilState(playerState);
   const [gameOver, setGameOver] = useRecoilState(gameOverState);
   const playersData = useRecoilValue(playersDataState);
-
   const setGameHistory = useSetRecoilState(gameHistoryState);
 
 

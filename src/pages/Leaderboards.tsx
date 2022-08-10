@@ -1,4 +1,5 @@
 import { Button, Container, Heading, HStack, Table, Tbody, Td, Thead, Tr, VStack } from '@chakra-ui/react';
+import { historyToWinCount } from 'helpers/historyToWinCount';
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
@@ -8,17 +9,7 @@ import { gameHistoryState } from 'state';
 const Leaderboards: React.FC = () => {
   const gameHistory = useRecoilValue(gameHistoryState);
   const navigate = useNavigate();
-  const groupedByName = useMemo(() => {
-    const group = gameHistory.reduce((acc,cur) => {
-      if(cur.winner === 0) return acc; //in case of a draw 
-      const winner = cur.players[cur.winner].name;
-      acc[winner] = {name:winner, wins: (acc[winner]?.wins ?? 0) + 1}  
-      return acc;
-    },{} as Record<string, {name:string,wins:number}>);
-    
-    const asList = Object.values(group);
-    return asList.sort((a,b) => b.wins - a.wins);
-  }, [gameHistory]);
+  const groupedByName = useMemo(() => historyToWinCount(gameHistory), [gameHistory]);
 
   return (
     <Container py={4} >
