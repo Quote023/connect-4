@@ -1,6 +1,6 @@
 import { boardCols, defaultPlayerName, p1Palette, p2Palette } from "const";
-import { atom } from "recoil";
-import { Board, GameHistory, Player, PlayerData } from "types";
+import { atom, selector } from "recoil";
+import { Board, GameHistory, GameOverState, Player, PlayerData } from "types";
 import { localStorageEffect } from "./effects";
 
 
@@ -38,8 +38,16 @@ export const playersDataState = atom<Record<Player,PlayerData>>({
   effects: [localStorageEffect("currentPlayersData")]
 })
 
-export const gameOverState = atom<boolean>({
+export const gameOverState = atom<GameOverState>({
   key: "gameOverState",
-  default: false,
+  default: {isOver: false, isDraw: false},
   effects: [localStorageEffect("currentGameOver")]
+});
+
+export const isOverState = selector({
+  key: 'isOverState',
+  get: ({get}) => {
+    const {isDraw,isOver} = get(gameOverState);
+    return isOver || isDraw;
+  },
 });

@@ -1,7 +1,7 @@
 import { boardRows } from "const";
 import {v4 as uuidv4} from "uuid";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { boardState, gameHistoryState, gameOverState, playersDataState, playerState, playSequenceState } from "state";
+import { boardState, gameHistoryState, gameOverState, isOverState, playersDataState, playerState, playSequenceState } from "state";
 import { Board } from "types";
 
 const getDiagonals = (board: Board,col: number, row: number) => {
@@ -26,11 +26,11 @@ const usePlayPiece = () => {
   const [board, setBoard] = useRecoilState(boardState);
   const [playSequence,setPlaySequence] = useRecoilState(playSequenceState);
   const [player, setPlayerTurn] = useRecoilState(playerState);
-  const [gameOver, setGameOver] = useRecoilState(gameOverState);
   const playersData = useRecoilValue(playersDataState);
   const setGameHistory = useSetRecoilState(gameHistoryState);
-
-
+  const setGameOver = useSetRecoilState(gameOverState);
+  const gameOver = useRecoilValue(isOverState);
+  console.log({draw: board.every(x => x.length >= boardRows)})
   return (col: number) => {
     // Prevent adding a piece when the game is over
     if (gameOver) {
@@ -50,20 +50,18 @@ const usePlayPiece = () => {
 
     const row = newBoard[col].length - 1;
     const [ld,rd] = getDiagonals(newBoard,col,row)
-    if (
-      testWin(newBoard[col]) || // Did win vertically
-      testWin(newBoard.map((col) => col[row] || 0)) ||// Did win horizontally
-      testWin(ld) ||// Did win diagonally from the left
-      testWin(rd)// Did win diagonally from the right
-    ) {
-      setGameOver(true);
-      setGameHistory(hs => [...hs, {
+    const hasWinner = (testWin(newBoard[col]) || testWin(newBoard.map((col) => col[row] || 0)) || testWin(ld) ||testWin(rd))
+    const isDraw = newBoard.every(x => x.length >= boardRows)
+    console.log({hasWinner, isDraw: true})
+    if (hasWinner || isDraw) {
+      setGameOver({isOver:true, isDraw: isDraw});
+      setGameHistory(hs => [{
         id: uuidv4().split("-")[0],
         board: newBoard,
         sequence: newSeq,
-        winner: player,
+        winner: isDraw ? 0 : player,
         players: playersData
-      }])
+      },...hs])
     } else {
       setPlayerTurn(player === 1 ? 2 : 1);
     }

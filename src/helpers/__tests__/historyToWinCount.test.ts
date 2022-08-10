@@ -16,3 +16,10 @@ test("should ignore games with no winner", () => {
   expect(historyToWinCount(data)).toHaveLength(1);
 })
 
+test("should order descending by win count", () => {
+  const data:GameHistory = [
+    makeGame(),makeGame(),
+    {...makeGame(),winner:2},{...makeGame(),winner:2},{...makeGame(),winner:2}
+  ];
+  expect(historyToWinCount(data)[0]).toHaveProperty("name",defaultPlayerName[2]);
+})

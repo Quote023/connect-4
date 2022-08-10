@@ -29,10 +29,10 @@ type PlayerInfoForm = {
 const Menu: React.FC = () => {
   const [playersData,setPlayersData] = useRecoilState(playersDataState)
   const board = useRecoilValue(boardState);
-  const gameOver = useRecoilValue(gameOverState);
+  const {isDraw,isOver} = useRecoilValue(gameOverState);
   const handleNewGame = useResetGame();
   const navigate = useNavigate();
-  
+  const gameOver = isOver || isDraw 
   const onGoingGame = board.some((col) => col.length) && !gameOver;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

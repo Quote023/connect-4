@@ -1,6 +1,6 @@
 export type Player = 1 | 2;
 export type Board = Player[][];
-
+export type GameOverState = {isOver: boolean, isDraw: boolean}
 export type PlayerData = {
   num: Player;
   name: string;

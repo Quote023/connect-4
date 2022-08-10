@@ -3,7 +3,7 @@ import { boardRows } from "const";
 import { usePlayPiece } from "hooks";
 import { FC } from "react";
 import { useRecoilValue } from "recoil";
-import { boardState, gameOverState, playerState,playersDataState } from "state";
+import { boardState, playerState,playersDataState, isOverState } from "state";
 import { Player } from "types";
 
 const padCol = (col: number[]): number[] =>
@@ -13,7 +13,7 @@ const Board: FC = () => {
   const play = usePlayPiece();
   const board = useRecoilValue(boardState);
   const player = useRecoilValue(playerState);
-  const gameOver = useRecoilValue(gameOverState);
+  const gameOver = useRecoilValue(isOverState);
   const playersData = useRecoilValue(playersDataState);
   return (
     <Flex justify="center">

@@ -5,13 +5,13 @@ import { gameOverState, playerState,playersDataState } from "state";
 
 const GameProgress: FC = () => {
   const player = useRecoilValue(playerState);
-  const gameOver = useRecoilValue(gameOverState);
+  const {isOver,isDraw} = useRecoilValue(gameOverState);
   const playersData = useRecoilValue(playersDataState);
   const name = playersData[player].name;
-  
+
   return (
     <Heading as="h3" size="lg">
-      {gameOver ? `${name} wins!` : `${name}'s turn`}
+      {isDraw ? "Draw!" :  isOver ? `${name} wins!` : `${name}'s turn`}
     </Heading>
   );
 };
